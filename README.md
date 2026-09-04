@@ -19,5 +19,10 @@ regenerated with SAGA 9.12 before a release whenever its command-line tool
 interfaces change. Run `scripts/update-saga-descriptions.ps1` from PowerShell
 and review the resulting diff before committing it.
 
+The standard OSGeo4W/Windows SAGA package may not contain the `dev_tools`
+library. If the script reports that this library is unavailable, build SAGA
+9.12 from source with `-DWITH_DEV_TOOLS:BOOL=ON` and pass the resulting SAGA
+directory to the script. Use `-NoPause` when running the script from automation;
+interactive runs pause before the PowerShell window closes.
 
 

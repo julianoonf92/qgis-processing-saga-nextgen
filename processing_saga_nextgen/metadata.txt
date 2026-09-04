@@ -11,7 +11,7 @@ name=Processing Saga NextGen Provider
 qgisMinimumVersion=3.22
 qgisMaximumVersion=4.99.0
 description=A Processing provider for modern SAGA releases
-version=1.2.1
+version=1.2.2
 author=North Road
 email=nyall@north-road.com
 
@@ -33,7 +33,8 @@ repository=https://github.com/north-road/qgis-processing-saga-nextgen
 # Recommended items:
 
 # Uncomment the following line and add your changelog:
-changelog=1.2.1 Add friendly categories for the expanded SAGA tool catalogue.
+changelog=1.2.2 Improve the Windows catalogue generator diagnostics and console handling.
+    1.2.1 Add friendly categories for the expanded SAGA tool catalogue.
     1.2.0 Target SAGA 9.12+ and QGIS 4.2+. Add semantic SAGA version checks.
     1.1.1 Added experimental version for QGIS 4.0.0.
     1.1.0 Target 9.2+. Misc fixes and improvements.
