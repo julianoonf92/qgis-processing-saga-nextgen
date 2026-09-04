@@ -5,6 +5,7 @@ on:
     paths:
     - "processing_saga_nextgen/**"
     - ".github/workflows/test_plugin.yaml"
+    - ".docker/**"
   pull_request:
     types: [opened, synchronize, edited]
 
@@ -26,9 +27,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        qgis_version: ["3.34", "3.40", "3.42"]
+        qgis_version: ["3.40", "3.42", "4.2"]
     env:
       QGIS_TEST_VERSION: ${{ matrix.qgis_version }}
+      SAGA_TEST_VERSION: "9.12"
 
     steps:
 

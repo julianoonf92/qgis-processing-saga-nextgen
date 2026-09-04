@@ -171,10 +171,11 @@ class SagaAlgorithm(SagaAlgorithmBase):
                 )
             )
 
-        if version < SagaUtils.REQUIRED_VERSION:
-            feedback.reportError(
+        if not SagaUtils.isSupportedVersion(version):
+            raise QgsProcessingException(
                 self.tr(
-                    "Problem with SAGA installation: unsupported SAGA version (found: {}, required: >={})."
+                    "Problem with SAGA installation: unsupported SAGA version "
+                    "(found: {}, required: >={})."
                 ).format(version, SagaUtils.REQUIRED_VERSION)
             )
 

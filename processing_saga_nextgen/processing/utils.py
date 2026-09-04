@@ -17,6 +17,7 @@
 
 import os
 import platform
+import re
 import stat
 import subprocess
 import time
@@ -35,7 +36,7 @@ class SagaUtils:
     SAGA processing utilities
     """
 
-    REQUIRED_VERSION = "9.11.1"
+    REQUIRED_VERSION = "9.12.0"
 
     SAGA_FOLDER = "SAGA_FOLDER"
     SAGA_LOG_COMMANDS = "SAGANG_LOG_COMMANDS"
@@ -64,11 +65,11 @@ class SagaUtils:
                 # create path if needed
                 p = Path(intermediateDir)
                 p.mkdir(parents=True, exist_ok=True)
-                with tempfile.NamedTemporaryFile(dir=intermediateDir) as f:  # pylint:disable=unused-variable
+                with tempfile.NamedTemporaryFile(dir=intermediateDir):
                     # temp file will be opened and closed, this throws an exception if it fails for some reason (e.g. missing permissions)
                     # we thus know the path is writable now, so use it
                     batchfile = os.path.join(intermediateDir, filename)
-            except:  # pylint:disable=bare-except
+            except OSError:
                 # cannot write to specified directory, use default
                 batchfile = os.path.join(userFolder(), filename)
         else:
@@ -172,7 +173,7 @@ class SagaUtils:
             return SagaUtils._installed_version
 
         if isWindows():
-            commands = [os.path.join(SagaUtils.sagaPath(), "saga_cmd.exe"), "-v"]
+            commands = [SagaUtils.sagaExecutablePath(), "-v"]
         elif isMac() or platform.system() == "FreeBSD":
             commands = [os.path.join(SagaUtils.sagaPath(), "saga_cmd -v")]
         else:
@@ -183,7 +184,7 @@ class SagaUtils:
         while retries < maxRetries:
             with subprocess.Popen(
                 commands,
-                shell=True,
+                shell=not isWindows(),
                 stdout=subprocess.PIPE,
                 stdin=subprocess.DEVNULL,
                 stderr=subprocess.STDOUT,
@@ -209,6 +210,36 @@ class SagaUtils:
                     return None
 
         return SagaUtils._installed_version
+
+    @staticmethod
+    def sagaExecutablePath():
+        """Returns the configured SAGA command-line executable.
+
+        An absolute executable path is important on Windows, where QGIS and an
+        OSGeo4W shell can have different ``PATH`` values.
+        """
+        executable = "saga_cmd.exe" if isWindows() else "saga_cmd"
+        saga_path = SagaUtils.sagaPath()
+        return os.path.join(saga_path, executable) if saga_path else executable
+
+    @staticmethod
+    def parseVersion(version):
+        """Returns a comparable numeric tuple for a SAGA version string."""
+        if version is None:
+            return None
+
+        match = re.search(r"(?<!\d)(\d+)\.(\d+)(?:\.(\d+))?", str(version))
+        if not match:
+            return None
+
+        return tuple(int(part or 0) for part in match.groups())
+
+    @staticmethod
+    def isSupportedVersion(version):
+        """Returns whether *version* meets the minimum SAGA requirement."""
+        parsed_version = SagaUtils.parseVersion(version)
+        required_version = SagaUtils.parseVersion(SagaUtils.REQUIRED_VERSION)
+        return parsed_version is not None and parsed_version >= required_version
 
     @staticmethod
     def executeSaga(feedback):
