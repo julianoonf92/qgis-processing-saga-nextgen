@@ -3,6 +3,8 @@ Algorithm and group name formatting utilities
 """
 
 groups = {
+    "group_files": "Import/Export",
+    "imagery": "Imagery",
     "ta_slope_stability": "Terrain Analysis",
     "pointcloud_tools": "Features",
     "imagery_maxent": "Imagery",
@@ -18,6 +20,7 @@ groups = {
     "statistics_kriging": "Spatial and Geostatistics",
     "grid_analysis": "Raster",
     "shapes_polygons": "Features",
+    "polygon_tools": "Features",
     "io_gdal": "Import/Export",
     "grid_tools": "Raster",
     "grid_filter": "Raster",
@@ -51,6 +54,18 @@ groups = {
     "io_virtual": "Import/Export",
     "pj_proj4": "Projection",
     "imagery_vigra": "Imagery",
+    "sim_air_flow": "Simulation",
+    "sim_cellular_automata": "Simulation",
+    "sim_ecosystems_hugget": "Simulation",
+    "sim_erosion": "Simulation",
+    "sim_fire_spreading": "Simulation",
+    "sim_geomorphology": "Simulation",
+    "sim_hydrology": "Simulation",
+    "sim_landscape_evolution": "Simulation",
+    "sim_qm_of_esp": "Simulation",
+    "sim_rivflow": "Simulation",
+    "terrain_analysis": "Terrain Analysis",
+    "toolchains": "Tool Chains",
     "tta_tools": "Tool Chains",
 }
 
@@ -59,7 +74,15 @@ def decoratedGroupName(name: str) -> str:
     """
     Returns a nice user-friendly group name instead of a raw SAGA group name
     """
-    return groups.get(name, name)
+    if name in groups:
+        return groups[name]
+
+    # New SAGA tool libraries should still have a readable name until an
+    # explicit category is assigned above.
+    if "_" in name and name.lower() == name:
+        return name.replace("_", " ").title()
+
+    return name
 
 
 algorithms = {

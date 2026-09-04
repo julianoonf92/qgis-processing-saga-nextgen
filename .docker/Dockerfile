@@ -1,8 +1,11 @@
 ARG QGIS_TEST_VERSION=latest
 FROM  qgis/qgis:${QGIS_TEST_VERSION}
 
+ARG SAGA_TEST_VERSION=9.12
+
 RUN apt-get update && \
     apt-get install -y saga && \
+    saga_cmd -v 2>&1 | grep -E "SAGA Version: ${SAGA_TEST_VERSION}([.]|$)" && \
     rm -rf /var/lib/apt/lists/*
 
 # Useful only in 3.22 and 3.28: drop when not need anymore
